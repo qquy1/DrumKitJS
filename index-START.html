@@ -6,8 +6,18 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!--buttons-->
+  <div id="container">
+    <button class="button record" onclick="recordFunction()" id="myButton">Record</button>
+    <button class="button reset" id="resetButton">Reset</button>
+  </div>
+
+  
 
 
+ 
+  
+  <!-- <button class="button">Reset</button> -->
   <div class="keys">
     <div data-key="65" class="key">
       <kbd>A</kbd>
@@ -58,7 +68,52 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  
+  var data = [];                        // to store keypresses
 
+  function playSound(e) {
+    // a variable to listen to event
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+    if(!audio) return;   // if null, stop function
+    
+    // to overwrite current playing sound
+    audio.currentTime = 0;
+    // play event
+    audio.play();
+    key.classList.add('playing');
+
+    // store event if button is still recording - meaning text appears as Stop
+    if (document.getElementById("myButton").innerHTML=="Stop"){
+      data.push(e);
+
+    }
+  }
+
+  function removeTransition(e){
+    if(e.propertyName !== 'transform') return; // skip if not transofrm
+    this.classList.remove('playing');
+  }
+
+  function recordFunction(){
+    var btn = document.getElementById("myButton");
+    if (btn.innerHTML == "Record"){
+      btn.innerHTML = "Stop";                 // change button text to stop
+    }
+    else {
+      btn.innerHTML = "Record";
+      console.log('NO');
+    }
+    
+    
+
+    }
+  
+
+  window.addEventListener('keydown', playSound)
+  const keys = document.querySelectorAll('.key');
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+  
 </script>
 
 
