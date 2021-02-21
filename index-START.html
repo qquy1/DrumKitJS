@@ -8,8 +8,9 @@
 <body>
   <!--buttons-->
   <div id="container">
-    <button class="button record" onclick="recordFunction()" id="myButton">Record</button>
-    <button class="button reset" id="resetButton">Reset</button>
+    <button class="button record" onclick="recordFunction()" id="myButton">Record</button> <!--recording button-->
+    <button class="button play" onclick="play()" id="play">Play</button>
+    <button class="button reset" id="resetButton" onclick="resetData()">Reset</button> <!--reset button-->
   </div>
 
   
@@ -70,7 +71,8 @@
 <script>
   
   var data = [];                        // to store keypresses
-
+  
+  
   function playSound(e) {
     // a variable to listen to event
     const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
@@ -82,12 +84,12 @@
     // play event
     audio.play();
     key.classList.add('playing');
+    // console.log(e.timeStamp);
 
     // store event if button is still recording - meaning text appears as Stop
     if (document.getElementById("myButton").innerHTML=="Stop"){
       data.push(e);
-
-    }
+  }
   }
 
   function removeTransition(e){
@@ -102,13 +104,40 @@
     }
     else {
       btn.innerHTML = "Record";
-      console.log('NO');
+      
+      
     }
-    
-    
-
     }
   
+  function resetData(){
+    data = [];             // clear data
+  }
+
+  async function play(){
+    document.getElementById("myButton").innerHTML = "Record";   // if pressed on play, sotp recording
+    // if empty just skip
+    if (data.length == 0){
+      return
+    }
+    //console.log(data);
+    playSound(data[0]);
+    for (i = 1; i < data.length; i++) {
+      await sleep(data[i].timeStamp - data[i-1].timeStamp);
+      playSound(data[i]);
+      
+      
+    }
+
+  }
+
+  function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+ // difficulty- was trying to set up this time delay as recorded in our keypresses
+ // luckily by introduction of this sleep function making new promises each time called
+ // you can activate set time out to actually wait before continuing with the next line of code
+
+
 
   window.addEventListener('keydown', playSound)
   const keys = document.querySelectorAll('.key');
